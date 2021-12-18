@@ -1,0 +1,18 @@
+{
+  "name": "trabajo-final",
+  "version": "1.0.0",
+  "description": "tp-final-coder",
+  "main": "index.js",
+  "scripts": {
+    "start": "node app.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "vogel nahuel",
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^10.0.0",
+    "express": "^4.17.1",
+    "multer": "^1.4.3"
+  }
+}

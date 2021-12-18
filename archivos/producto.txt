@@ -1,0 +1,32 @@
+[
+	{
+		"nombre": "test3",
+		"descripcion": "test3",
+		"codigo": "test3",
+		"precio": "25",
+		"stock": "test3",
+		"foto": "Sin título2.png",
+		"timestamp": 1639785687222,
+		"id": 1
+	},
+	{
+		"nombre": "test3",
+		"descripcion": "test3",
+		"codigo": "test3",
+		"precio": "25",
+		"stock": "test3",
+		"foto": "Sin título2.png",
+		"timestamp": 1639785688545,
+		"id": 2
+	},
+	{
+		"nombre": "test3",
+		"descripcion": "test3",
+		"codigo": "test3",
+		"precio": "25",
+		"stock": "test3",
+		"foto": "Sin título2.png",
+		"timestamp": 1639785689093,
+		"id": 3
+	}
+]
