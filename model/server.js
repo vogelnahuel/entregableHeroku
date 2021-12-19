@@ -1,5 +1,6 @@
 const express = require("express");
 const {isAdmin} = require('../utils/utils');
+const cors = require('cors');
 
 class Servidor {
   constructor() {
@@ -22,6 +23,7 @@ class Servidor {
     this.app.use(express.static("public"));
     //  middleware que  verifica si es admin o no 
     this.app.use(isAdmin) 
+    app.use(cors({origin: 'http://localhost:3000'}));
   }
 
   routes() {
