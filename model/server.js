@@ -5,9 +5,11 @@ const cors = require('cors');
 class Servidor {
   constructor() {
     this.app = express();
+    this.app.use(cors({origin: '*'}));
     this.port = process.env.PORT;
     this.productosPath = "/api/productos";
     this.carritoPath = "/api/carrito";
+    
     //Middlewares
     this.middlewares();
 
@@ -23,7 +25,7 @@ class Servidor {
     this.app.use(express.static("public"));
     //  middleware que  verifica si es admin o no 
     this.app.use(isAdmin) 
-    app.use(cors({origin: 'http://localhost:3000'}));
+   
   }
 
   routes() {
