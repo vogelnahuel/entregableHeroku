@@ -17,7 +17,7 @@ npm i
 2. Ejecutar :
 
 ```
-app.js  que es el archivo principal
+app.js  que es el archivo principal o el script creado npm start
 ```
 
 3. rutas :
