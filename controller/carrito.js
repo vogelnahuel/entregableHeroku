@@ -58,12 +58,7 @@ const carritoProductoPost = async (req, res, next) => {
   if (seleccionado?.httpStatusCode) {
     return next(seleccionado);
   }
-  const foto = req.file ? req.file : req.body.foto; // para saber si viene de postman o de un form
-  if (!foto) {
-    const error = new Error(" enviar file :( ");
-    error.httpStatusCode = 400;
-    return next(error);
-  }
+
   const idParam = parseInt(req.params.id);
 
   let contenidoProductosArchivo = await archivo.leerArchivo(

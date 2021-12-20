@@ -4,13 +4,13 @@
 		"carrito": {
 			"productos": [
 				{
-					"nombre": "actualizarTest",
-					"descripcion": "actualizarTest",
-					"codigo": "actualizarTest",
-					"precio": "23",
-					"stock": "actualizarTest",
-					"foto": "Sin título.png",
-					"timestamp": 1639848399952,
+					"nombre": "test",
+					"descripcion": "test",
+					"codigo": "test",
+					"precio": "25",
+					"stock": "test",
+					"foto": "KHE.png",
+					"timestamp": 1640025730977,
 					"id": 1
 				},
 				{
@@ -19,41 +19,13 @@
 					"codigo": "actualizarTest",
 					"precio": "23",
 					"stock": "actualizarTest",
-					"foto": "Sin título.png",
-					"timestamp": 1639848399952,
-					"id": 2
-				},
-				{
-					"nombre": "test3",
-					"descripcion": "test3",
-					"codigo": "test3",
-					"precio": "25",
-					"stock": "test3",
-					"foto": "KHE.png",
-					"timestamp": 1639848391058,
+					"foto": "asd.png",
+					"timestamp": 1640025769258,
 					"id": 3
-				},
-				{
-					"nombre": "test3",
-					"descripcion": "test3",
-					"codigo": "test3",
-					"precio": "25",
-					"stock": "test3",
-					"foto": "KHE.png",
-					"timestamp": 1639848391058,
-					"id": 4
 				}
 			],
-			"idProductos": 4,
-			"timestamp": 1639848412006
-		}
-	},
-	{
-		"id": 2,
-		"carrito": {
-			"productos": [],
-			"idProductos": 0,
-			"timestamp": 1639848413012
+			"idProductos": 3,
+			"timestamp": 1640025789171
 		}
 	},
 	{
@@ -61,7 +33,7 @@
 		"carrito": {
 			"productos": [],
 			"idProductos": 0,
-			"timestamp": 1639848431134
+			"timestamp": 1640025891202
 		}
 	}
 ]
