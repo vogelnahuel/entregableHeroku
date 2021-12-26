@@ -3,7 +3,7 @@ const fs = require('fs')
 
 class Archivo {
 
-    crearArchivoYsobreEscribir = async (ruta, contenido) => {
+    crearArchivoYsobreEscribir = async (ruta:any, contenido:any) => {
         const insertar = JSON.stringify(contenido, null, '\t');
         try {
             await fs.promises.writeFile(ruta, insertar)
@@ -12,7 +12,7 @@ class Archivo {
         }
     }
 
-    leerArchivo = async (ruta, codificacion) => {
+    leerArchivo = async (ruta:any, codificacion:any) => {
         try {
             const data = await fs.promises.readFile(ruta, codificacion);
             return (JSON.parse(data));
@@ -20,7 +20,7 @@ class Archivo {
             console.log(error)
         }
     }
-    eliminarArchivo = async (ruta) => {
+    eliminarArchivo = async (ruta:any) => {
         try {
             await fs.promises.unlink(ruta);
         } catch (error) {
@@ -29,7 +29,7 @@ class Archivo {
     }
 }
 
-module.exports = Archivo;
+export default Archivo;
 
 
 

@@ -1,4 +1,7 @@
 class Carrito {
+  productos: any[];
+  idProductos: number;
+  timestamp: number;
   constructor() {
     this.productos = []; //es el array de obj que va a escribirse en el archivo
     this.idProductos = 0;
@@ -13,17 +16,17 @@ class Carrito {
       productos: this.productos,
     };
   }
-  insertarProducto(producto) {
+  insertarProducto(producto:any) {
     this.idProductos++;
     producto.id = this.idProductos | 0;
     this.productos.push(producto);
     return this.idProductos;
   }
-  eliminarProducto(id) {
+  eliminarProducto(id:any) {
     const productosFiltrados = this.productos.filter(
       (producto) => producto.id !== id
     );
     this.productos = productosFiltrados;
   }
 }
-module.exports = Carrito;
+export default Carrito;

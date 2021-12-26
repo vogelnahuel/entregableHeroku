@@ -1,15 +1,10 @@
-const multer = require("multer");
-const { Router } = require("express");
-const { inicializacionFile } = require("../utils/utils");
+import multer from "multer";
+import { Router } from "express";
+import { inicializacionFile } from "../utils/utils";
 const storage = inicializacionFile();
 const upload = multer({ storage });
 
-const {
-  productoGet,
-  productoPut,
-  productoPost,
-  productoDelete,
-} = require("../controller/producto");
+import { productoGet, productoPut, productoPost, productoDelete } from "../controller/producto";
 
 const routerProductos = Router();
 
@@ -21,4 +16,5 @@ routerProductos.post("/", upload.single("foto"), productoPost);
 
 routerProductos.delete("/:id", productoDelete);
 
+export default routerProductos;
 module.exports = routerProductos;

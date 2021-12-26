@@ -1,4 +1,13 @@
 class Producto {
+  nombre: string;
+  descripcion: string;
+  codigo: string;
+  precio: number;
+  stock: number;
+  foto: string;
+  timestamp: number;
+  id:number;
+
   constructor() {
     this.nombre = "";
     this.descripcion = "";
@@ -7,9 +16,10 @@ class Producto {
     this.stock = 0;
     this.foto = "";
     this.timestamp = 0;
+    this.id=0;
   }
   static id = 0;
-  crearProducto(obj) {
+  crearProducto(obj:any) {
     this.nombre = obj.nombre;
     this.descripcion = obj.descripcion;
     this.codigo = obj.codigo;
@@ -21,7 +31,7 @@ class Producto {
     this.id = Producto.id;
   }
 
-  actualizarProducto(obj) {
+  actualizarProducto(obj:any) {
     this.nombre = obj.nombre;
     this.descripcion = obj.descripcion;
     this.codigo = obj.codigo;
@@ -32,4 +42,4 @@ class Producto {
     this.id = obj.id;
   }
 }
-module.exports = Producto;
+export default Producto;

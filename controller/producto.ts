@@ -1,16 +1,16 @@
-const { filtrar } = require("../utils/utils");
+import { filtrar } from "../utils/utils";
 
 //inicializacion de variables donde se guardan id y los productos
-let productos = [];
+let productos:any = [];
 
-const Producto = require("../model/productos");
-const Archivo = require("../model/Archivo.js");
+import Producto from "../model/productos";
+import Archivo from "../model/Archivo.js";
 const rutaProductos = "archivos/producto.txt";
 
 const codificacion = "utf-8";
 const archivo = new Archivo();
 
-const productoGet = async (req, res, next) => {
+export const productoGet = async (req:any, res:any, next:any) => {
 
   const idParam = parseInt(req.params.id);
 
@@ -31,12 +31,12 @@ const productoGet = async (req, res, next) => {
 };
 
 //mandar como nombre thumbnail  el campo si se utiliza desde postman la key para el File
-const productoPost = async (req, res, next) => {
+export const productoPost = async (req:any, res:any, next:any) => {
 
   const foto = req.file ? req.file : req.body.foto; // para saber si viene de postman o de un form
 
   if (!foto) {
-    const error = new Error(" enviar file :( ");
+    const error:any = new Error(" enviar file :( ");
     error.httpStatusCode = 400;
     return next(error);
   }
@@ -62,7 +62,7 @@ const productoPost = async (req, res, next) => {
   return res.json(nuevoProducto);
 };
 
-const productoPut = async (req, res, next) => {
+export const productoPut = async (req:any, res:any, next:any) => {
 
   const foto = req.file ? req.file : req.body.foto;
 
@@ -84,7 +84,7 @@ const productoPut = async (req, res, next) => {
   const timestamp = Date.now();
 
   const idAFiltrar = productos.findIndex(
-    (contenedor) => contenedor.id == idParam
+    (contenedor:any) => contenedor.id == idParam
   );
 
   productos[idAFiltrar].actualizarProducto({
@@ -111,7 +111,7 @@ const productoPut = async (req, res, next) => {
   });
 };
 
-const productoDelete = async (req, res, next) => {
+export const productoDelete = async (req:any, res:any, next:any) => {
 
   const idParam = parseInt(req.params.id);
 
@@ -121,16 +121,11 @@ const productoDelete = async (req, res, next) => {
     return next(eliminado);
   }
   const todosMenosEliminado = productos.filter(
-    (producto) => producto.id !== idParam
+    (producto:any) => producto.id !== idParam
   );
   productos = todosMenosEliminado;
   await archivo.crearArchivoYsobreEscribir(rutaProductos, productos);
   res.json(eliminado[0]);
 };
 
-module.exports = {
-  productoGet,
-  productoPut,
-  productoPost,
-  productoDelete,
-};
+

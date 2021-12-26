@@ -1,14 +1,14 @@
-const { filtrar } = require("../utils/utils");
-const Archivo = require("../model/Archivo.js");
-const Carrito = require("../model/carrito");
+import { filtrar } from "../utils/utils";
+import Archivo from "../model/Archivo.js";
+import Carrito from "../model/carrito";
 const rutaCarritos = "archivos/carrito.txt";
 const rutaProductos = "archivos/producto.txt";
 const codificacion = "utf-8";
 const archivo = new Archivo();
 
-let contenedorDeCarritos = [];
+let contenedorDeCarritos:any = [];
 
-const carritoPost = async (req, res) => {
+export const carritoPost = async (req:any, res:any) => {
   const carrito = new Carrito();
   const creado = carrito.crearCarrito();
   contenedorDeCarritos.push({ id: Carrito.id, carrito });
@@ -22,14 +22,14 @@ const carritoPost = async (req, res) => {
   });
 };
 
-const carritoDelete = async (req, res, next) => {
+export const carritoDelete = async (req:any, res:any, next:any) => {
   const idParam = parseInt(req.params.id);
   const eliminado = filtrar(contenedorDeCarritos, idParam);
   if (eliminado?.httpStatusCode) {
     return next(eliminado);
   }
   const todosMenosEliminado = contenedorDeCarritos.filter(
-    (carrito) => carrito.id !== idParam
+    (carrito:any) => carrito.id !== idParam
   );
   contenedorDeCarritos = todosMenosEliminado;
 
@@ -41,7 +41,7 @@ const carritoDelete = async (req, res, next) => {
   });
 };
 
-const carritoGet = async (req, res, next) => {
+export const carritoGet = async (req:any, res:any, next:any) => {
   const idParam = parseInt(req.params.id);
   const seleccionado = filtrar(contenedorDeCarritos, idParam);
   if (seleccionado?.httpStatusCode) {
@@ -51,7 +51,7 @@ const carritoGet = async (req, res, next) => {
 };
 
 //agrega de a 1 producto al carrito
-const carritoProductoPost = async (req, res, next) => {
+export const carritoProductoPost = async (req:any, res:any, next:any) => {
   const { idUser } = req.body;
 
   const seleccionado = filtrar(contenedorDeCarritos, parseInt(idUser));
@@ -70,7 +70,7 @@ const carritoProductoPost = async (req, res, next) => {
 
   if (!seleccionadoProducto?.httpStatusCode) {
     const idAFiltrar = contenedorDeCarritos.findIndex(
-      (contenedor) => contenedor.id == idUser
+      (contenedor:any) => contenedor.id == idUser
     );
     contenedorDeCarritos[idAFiltrar].carrito.insertarProducto(
       seleccionadoProducto[0]
@@ -83,13 +83,13 @@ const carritoProductoPost = async (req, res, next) => {
 
     res.json(seleccionadoProducto[0]);
   } else {
-    const error = new Error("Producto no encontrado ");
+    const error:any = new Error("Producto no encontrado ");
     error.httpStatusCode = 400;
     return next(error);
   }
 };
 
-const carritoProductoDelete = async (req, res, next) => {
+export const carritoProductoDelete = async (req:any, res:any, next:any) => {
   const idParam = parseInt(req.params.id);
 
   const carritoSeleccionado = filtrar(contenedorDeCarritos, idParam);
@@ -97,7 +97,7 @@ const carritoProductoDelete = async (req, res, next) => {
     return next(carritoSeleccionado);
   }
   const idAFiltrar = contenedorDeCarritos.findIndex(
-    (contenedor) => contenedor.id == idParam
+    (contenedor:any) => contenedor.id == idParam
   );
 
   const idParamProd = parseInt(req.params.id_prod);
@@ -125,10 +125,3 @@ const carritoProductoDelete = async (req, res, next) => {
   });
 };
 
-module.exports = {
-  carritoPost,
-  carritoDelete,
-  carritoGet,
-  carritoProductoPost,
-  carritoProductoDelete,
-};
