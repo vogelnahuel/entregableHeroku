@@ -1,3 +1,5 @@
+import { productosTypes } from "./types";
+
 class Producto {
   nombre: string;
   descripcion: string;
@@ -19,7 +21,7 @@ class Producto {
     this.id=0;
   }
   static id = 0;
-  crearProducto(obj:any) {
+  crearProducto(obj:productosTypes) {
     this.nombre = obj.nombre;
     this.descripcion = obj.descripcion;
     this.codigo = obj.codigo;
@@ -31,7 +33,7 @@ class Producto {
     this.id = Producto.id;
   }
 
-  actualizarProducto(obj:any) {
+  actualizarProducto(obj:productosTypes) {
     this.nombre = obj.nombre;
     this.descripcion = obj.descripcion;
     this.codigo = obj.codigo;

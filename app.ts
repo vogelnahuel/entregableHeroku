@@ -1,6 +1,7 @@
 import Servidor from "./model/server";
-require("dotenv").config();
+import dotenv from "dotenv";
+dotenv.config();
 
-const server = new Servidor();
+const server:Servidor = new Servidor();
 
 server.listen();

@@ -3,10 +3,13 @@ import { isAdmin } from '../utils/utils';
 import cors from 'cors';
 var corsOptions = { origin: '*' }
 class Servidor {
-  app: any;
-  port: any;
+
+
+  port?: string;
   productosPath: string;
   carritoPath: string;
+  app: express.Application
+
   constructor() {
     this.app = express();
     this.app.use(cors(corsOptions))
@@ -36,7 +39,7 @@ class Servidor {
     this.app.use(this.productosPath, require("../routes/productos"));
     this.app.use(this.carritoPath, require("../routes/carrito.js"));
     //ruta por defecto en caso de no encontrarse
-    this.app.all("*", (req: any, res: any) => {
+    this.app.all("*", (req, res) => {
       res
         .status(404)
         .json({ error: -2, descripcion: `ruta ${req.url} y  método  ${req.method} no implementados` });

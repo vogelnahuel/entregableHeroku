@@ -22,7 +22,7 @@ class Carrito {
     this.productos.push(producto);
     return this.idProductos;
   }
-  eliminarProducto(id:any) {
+  eliminarProducto(id:number) {
     const productosFiltrados = this.productos.filter(
       (producto) => producto.id !== id
     );
