@@ -1,4 +1,5 @@
-import mongoose from "mongoose";
+const mongoose = require("mongoose");
+const moment = require("moment")
 
 const productsSchema = new mongoose.Schema({
   _id: mongoose.Schema.Types.ObjectId,
@@ -15,14 +16,14 @@ const productsSchema = new mongoose.Schema({
   },
 });
 
-export class productsMongo {
+class ProductsMongo {
   mongoDB;
   productsModel;
   constructor(local = false) {
     // if (local) {
     //   this.mongoDB = `mongodb://localhost:27017/ecommerce`;
     // } else {
-        this.mongoDB =`mongodb+srv://nahuel:nahuel@cluster0.4gz4u.mongodb.net/ecommerce?retryWrites=true&w=majority`
+    this.mongoDB = `mongodb+srv://nahuel:nahuel@cluster0.4gz4u.mongodb.net/ecommerce?retryWrites=true&w=majority`
     //   this.mongoDB = `mongodb+srv://roboti:CoderHouseTest1234@cluster0.nodly.mongodb.net/ecommerceCH?retryWrites=true&w=majority`;
     // }
     mongoose.connect(this.mongoDB);
@@ -31,7 +32,7 @@ export class productsMongo {
 
   async get() {
     try {
-      const productsList = await this.productsModel.find({}).sort({ title: 1 });
+      const productsList = await this.productsModel.find({}).sort({nombre:1});
       if (productsList.length == 0)
         throw {
           status: 404,
@@ -46,12 +47,9 @@ export class productsMongo {
 
   async getById(productId) {
     try {
-      if (productId.length !== 24)
-        throw {
-          status: 400,
-          msg: "El id ingresado es incorrecto",
-        };
+
       const getProduct = await this.productsModel.findById(productId);
+
       if (!getProduct)
         throw {
           status: 404,
@@ -67,13 +65,13 @@ export class productsMongo {
     try {
       const newProduct = {
         _id: new mongoose.Types.ObjectId().toHexString(),
-        name: data.name,
-        description: data.description,
-        code: data.code,
-        photo: data.photo,
-        price: data.price,
+        nombre: data.nombre,
+        descripcion: data.descripcion,
+        codigo: data.codigo,
+        foto: data.foto,
+        precio: data.precio,
         stock: data.stock,
-        timestamps: `${moment().format("DD MM YYYY hh:mm")}`,
+        timestamp: `${moment().format("DD MM YYYY hh:mm")}`,
       };
       const addProduct = await this.productsModel.create(newProduct);
       return addProduct;
@@ -103,3 +101,4 @@ export class productsMongo {
     }
   }
 }
+module.exports =  ProductsMongo ;

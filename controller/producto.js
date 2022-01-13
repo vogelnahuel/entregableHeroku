@@ -5,28 +5,32 @@ let productos = [];
 
 const Producto = require("../model/productos");
 const Archivo = require("../model/Archivo.js");
+const ProductsMongo = require("../Daos/ContenedorProductoMongo");
+
 const rutaProductos = "archivos/producto.txt";
 
 const codificacion = "utf-8";
 const archivo = new Archivo();
+const productMongo = new ProductsMongo();
 
 const productoGet = async (req, res, next) => {
 
   const idParam = parseInt(req.params.id);
 
-  let contenidoProductosArchivo = await archivo.leerArchivo(
-    rutaProductos,
-    codificacion
-  );
+  // let contenidoProductosArchivo = await archivo.leerArchivo(
+  //   rutaProductos,
+  //   codificacion
+  // );
+  let contenidoProductos = await productMongo.get();
 
   if (idParam) {
-    const filtrado = filtrar(contenidoProductosArchivo, idParam);
+    const filtrado = filtrar(contenidoProductos, idParam);
     if (filtrado?.httpStatusCode) {
       return next(filtrado);
     }
     res.json(filtrado[0]);
   } else {
-    res.json(contenidoProductosArchivo);
+    res.json(contenidoProductos);
   }
 };
 
@@ -55,9 +59,10 @@ const productoPost = async (req, res, next) => {
     timestamp,
   });
 
-  productos.push(nuevoProducto);
+  // productos.push(nuevoProducto);
+  await productMongo.add(nuevoProducto);
 
-  await archivo.crearArchivoYsobreEscribir(rutaProductos, productos);
+  // await archivo.crearArchivoYsobreEscribir(rutaProductos, productos);
 
   return res.json(nuevoProducto);
 };
@@ -66,11 +71,14 @@ const productoPut = async (req, res, next) => {
 
   const foto = req.file ? req.file : req.body.foto;
 
-  const idParam = parseInt(req.params.id);
-  const filtrado = filtrar(productos, idParam);
-  if (filtrado?.httpStatusCode) {
-    return next(filtrado);
-  }
+  const idParam = req.params.id;
+
+ 
+  const filtrado = await productMongo.getById(idParam);
+  // const filtrado = filtrar(productos, idParam);
+  // if (filtrado?.httpStatusCode) {
+  //   return next(filtrado);
+  // }
 
   const { nombre, descripcion, codigo, precio, stock } = req.body;
 
@@ -83,21 +91,33 @@ const productoPut = async (req, res, next) => {
   const fotoInsert = foto ? foto.filename : filtrado[0].foto;
   const timestamp = Date.now();
 
-  const idAFiltrar = productos.findIndex(
-    (contenedor) => contenedor.id == idParam
-  );
+  // const idAFiltrar = productos.findIndex(
+  //   (contenedor) => contenedor.id == idParam
+  // );
 
-  productos[idAFiltrar].actualizarProducto({
-    nombre: nombreInsert,
-    descripcion: descripcionInsert,
-    codigo: codigoInsert,
-    precio: precioInsert,
-    stock: stockInsert,
-    foto: fotoInsert,
-    timestamp,
-    id: idParam,
-  });
-  await archivo.crearArchivoYsobreEscribir(rutaProductos, productos);
+  // productos[idAFiltrar].actualizarProducto({
+  //   nombre: nombreInsert,
+  //   descripcion: descripcionInsert,
+  //   codigo: codigoInsert,
+  //   precio: precioInsert,
+  //   stock: stockInsert,
+  //   foto: fotoInsert,
+  //   timestamp,
+  //   id: idParam,
+  // });
+
+    await productMongo.update(idParam,{
+         nombre: nombreInsert,
+         descripcion: descripcionInsert,
+         codigo: codigoInsert,
+         precio: precioInsert,
+         stock: stockInsert,
+         foto: fotoInsert,
+         _id: idParam,
+         timestamp,
+       })
+
+  // await archivo.crearArchivoYsobreEscribir(rutaProductos, productos);
 
   res.json({
     nombre: nombreInsert,
@@ -106,26 +126,28 @@ const productoPut = async (req, res, next) => {
     precio: precioInsert,
     stock: stockInsert,
     foto: fotoInsert,
-    id: idParam,
+    _id: idParam,
     timestamp,
   });
 };
 
 const productoDelete = async (req, res, next) => {
 
-  const idParam = parseInt(req.params.id);
+  const idParam = req.params.id;
+  await productMongo.delete(idParam);
+  res.json({text:`eliminado con exito ${idParam}`})
 
-  const eliminado = filtrar(productos, idParam);
+  // const eliminado = filtrar(productos, idParam);
 
-  if (eliminado?.httpStatusCode) {
-    return next(eliminado);
-  }
-  const todosMenosEliminado = productos.filter(
-    (producto) => producto.id !== idParam
-  );
-  productos = todosMenosEliminado;
-  await archivo.crearArchivoYsobreEscribir(rutaProductos, productos);
-  res.json(eliminado[0]);
+  // if (eliminado?.httpStatusCode) {
+  //   return next(eliminado);
+  // }
+  // const todosMenosEliminado = productos.filter(
+  //   (producto) => producto.id !== idParam
+  // );
+  // productos = todosMenosEliminado;
+  // await archivo.crearArchivoYsobreEscribir(rutaProductos, productos);
+  // res.json(eliminado[0]);
 };
 
 module.exports = {
