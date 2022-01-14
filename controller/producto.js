@@ -4,14 +4,12 @@ const { filtrar } = require("../utils/utils");
 let productos = [];
 
 const Producto = require("../model/productos");
-const Archivo = require("../model/Archivo.js");
-const ProductsMongo = require("../Daos/ContenedorProductoMongo");
 
-const rutaProductos = "archivos/producto.txt";
+const {product} = require("../Daos/index");
 
-const codificacion = "utf-8";
-const archivo = new Archivo();
-const productMongo = new ProductsMongo();
+
+
+
 
 const productoGet = async (req, res, next) => {
 
@@ -21,7 +19,8 @@ const productoGet = async (req, res, next) => {
   //   rutaProductos,
   //   codificacion
   // );
-  let contenidoProductos = await productMongo.get();
+  
+  let contenidoProductos = await product.get();
 
   if (idParam) {
     const filtrado = filtrar(contenidoProductos, idParam);
@@ -60,7 +59,7 @@ const productoPost = async (req, res, next) => {
   });
 
   // productos.push(nuevoProducto);
-  await productMongo.add(nuevoProducto);
+  await product.add(nuevoProducto);
 
   // await archivo.crearArchivoYsobreEscribir(rutaProductos, productos);
 
@@ -74,7 +73,7 @@ const productoPut = async (req, res, next) => {
   const idParam = req.params.id;
 
  
-  const filtrado = await productMongo.getById(idParam);
+  const filtrado = await product.getById(idParam);
   // const filtrado = filtrar(productos, idParam);
   // if (filtrado?.httpStatusCode) {
   //   return next(filtrado);
@@ -106,7 +105,7 @@ const productoPut = async (req, res, next) => {
   //   id: idParam,
   // });
 
-    await productMongo.update(idParam,{
+    await product.update(idParam,{
          nombre: nombreInsert,
          descripcion: descripcionInsert,
          codigo: codigoInsert,
@@ -134,7 +133,7 @@ const productoPut = async (req, res, next) => {
 const productoDelete = async (req, res, next) => {
 
   const idParam = req.params.id;
-  await productMongo.delete(idParam);
+  await product.delete(idParam);
   res.json({text:`eliminado con exito ${idParam}`})
 
   // const eliminado = filtrar(productos, idParam);
