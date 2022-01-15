@@ -13,16 +13,17 @@ const {product} = require("../Daos/index");
 
 const productoGet = async (req, res, next) => {
 
-  const idParam = parseInt(req.params.id);
+  const idParam = req.params.id;
 
   // let contenidoProductosArchivo = await archivo.leerArchivo(
   //   rutaProductos,
   //   codificacion
   // );
-  
+
   let contenidoProductos = await product.get();
 
   if (idParam) {
+
     const filtrado = filtrar(contenidoProductos, idParam);
     if (filtrado?.httpStatusCode) {
       return next(filtrado);

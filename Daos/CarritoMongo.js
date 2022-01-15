@@ -2,6 +2,7 @@ const moment = require("moment")
 const mongoose = require("mongoose");
 const ProductsMongo = require("./ProductoMongo");
 const product = new ProductsMongo();
+const ObjectId = require('mongodb').ObjectId;
 
 const carritoSchema = new mongoose.Schema({
   _id: mongoose.Schema.Types.ObjectId,
@@ -118,7 +119,7 @@ class DaoCarrito {
     try {
       await this.carritoModel.updateOne(
         { '_id': idUser },
-        { $pull: { "productos": { "_id" :productId } } }
+        { $pull: { "productos": { _id :ObjectId(productId) } } }
       );
     } catch (error) {
       throw error;

@@ -1,32 +1,134 @@
+const moment = require("moment")
+const mongoose = require("mongoose");
+const ProductsMongo = require("./ProductoMongo");
+const product = new ProductsMongo();
+const ObjectId = require('mongodb').ObjectId;
 
-const fs = require('fs')
+const carritoSchema = new mongoose.Schema({
+  _id: mongoose.Schema.Types.ObjectId,
+  productos: { type: Array, required: true },
+  timestamp: {
+    type: String,
+    required: true,
+    default: moment().format("DD/MM/YYYY HH:mm:ss"),
+  },
+});
 
-class Archivo {
 
-    crearArchivoYsobreEscribir = async (ruta, contenido) => {
-        const insertar = JSON.stringify(contenido, null, '\t');
-        try {
-            await fs.promises.writeFile(ruta, insertar)
-        } catch (error) {
-            console.log(error)
-        }
+class DaoCarritoFile {
+  mongoDB
+  carritoModel;
+
+  constructor() {
+    this.productos = [];
+    this.mongoDB = `mongodb+srv://nahuel:nahuel@cluster0.4gz4u.mongodb.net/ecommerce?retryWrites=true&w=majority`
+    mongoose.connect(this.mongoDB);
+    this.carritoModel = mongoose.model("carritos", carritoSchema);
+
+  }
+
+  async get() {
+    try {
+      const carritoList = await this.carritoModel.find({});
+      if (carritoList.length == 0)
+        throw {
+          status: 404,
+          msg: "Todavia no hay carritoList cargados en tu base de datos",
+        };
+
+      return carritoList;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async getById(IdCarrito) {
+    try {
+
+      const getCarrito = await this.carritoModel.findById(IdCarrito);
+      if (!getCarrito)
+        throw {
+          status: 404,
+          msg: "El carrito solicitado no existe",
+        };
+      return getCarrito;
+    } catch (error) {
+      throw error;
+    }
+  }
+  async addCarrito() {
+
+    try {
+      const newCarrito = {
+        _id: new mongoose.Types.ObjectId().toHexString(),
+        productos: [],
+        timestamp: `${moment().format("DD MM YYYY hh:mm")}`
+      }
+      const addCarrito = await this.carritoModel.create(newCarrito);
+      return addCarrito;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+
+  async addProduct(idUser, idProduct) {
+    let productoSeleccionado;
+
+    try {
+      productoSeleccionado = await product.getById(idProduct)
+
+    } catch (error) {
+      throw error;
     }
 
-    leerArchivo = async (ruta, codificacion) => {
-        try {
-            const data = await fs.promises.readFile(ruta, codificacion);
-            return (JSON.parse(data));
-        } catch (error) {
-            console.log(error)
-        }
+    try {
+      await this.carritoModel.updateOne({ "_id": idUser }, { $push: { productos: productoSeleccionado } })
+    } catch (error) {
+      throw error;
     }
-    eliminarArchivo = async (ruta) => {
-        try {
-            await fs.promises.unlink(ruta);
-        } catch (error) {
-            console.log(error)
-        }
+
+
+  }
+  // async update(productId, newData) {
+  //   const oldData = await this.getById(productId);
+  //   await this.delete(productId);
+  //   const updateData = { ...oldData, ...newData };
+  //   this.productos.push(updateData);
+  //   await this.add(updateData)
+  //   this.productos = this.productos.sort((productA, productB) => productA.id - productB.id);
+
+  //   return updateData;
+  // }
+
+  async delete(productId) {
+
+    const id = productId;
+
+    this.productos = this.productos.filter((aProduct) => aProduct._id !== id);
+    try {
+      await this.carritoModel.deleteOne({ _id: productId });
+    } catch (error) {
+      throw error;
     }
+
+  }
+
+  async deleteProduct(idUser, productId) {
+
+    try {
+      await this.carritoModel.updateOne(
+        { '_id': idUser },
+        { $pull: { "productos": { _id :ObjectId(productId) } } }
+      );
+    } catch (error) {
+      throw error;
+    }
+
+  }
+
+
+
 }
 
-module.exports = Archivo;
+module.exports = DaoCarritoFile
