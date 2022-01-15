@@ -8,7 +8,7 @@ class Producto {
     this.foto = "";
     this.timestamp = 0;
   }
-  static id = 0;
+
   crearProducto(obj) {
     this.nombre = obj.nombre;
     this.descripcion = obj.descripcion;
@@ -17,8 +17,6 @@ class Producto {
     this.stock = obj.stock;
     this.foto = obj.foto;
     this.timestamp = obj.timestamp;
-    Producto.id++;
-    this.id = Producto.id;
   }
 
   actualizarProducto(obj) {
@@ -29,7 +27,6 @@ class Producto {
     this.stock = obj.stock;
     this.foto = obj.foto;
     this.timestamp = obj.timestamp;
-    this.id = obj.id;
   }
 }
 module.exports = Producto;

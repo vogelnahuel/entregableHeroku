@@ -1,17 +1,13 @@
 class Carrito {
   constructor() {
     this.productos = []; //es el array de obj que va a escribirse en el archivo
-    this.idProductos = 0;
     this.timestamp = Date.now();
   }
-  static id = 0;
-  crearCarrito() {
-    Carrito.id++;
-    return {
-      id: Carrito.id,
-      timestamp: this.timestamp,
-      productos: this.productos,
-    };
+
+  crearCarrito(obj) {
+    this.productos=obj.productos;
+    this.timestamp=obj.timestamp;
+
   }
   insertarProducto(producto) {
     this.idProductos++;
