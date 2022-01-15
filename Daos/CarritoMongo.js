@@ -82,7 +82,7 @@ class DaoCarrito {
     }
 
     try {
-      await this.carritoModel.updateOne({ "_id": idUser }, { $push: { producto: productoSeleccionado } })
+      await this.carritoModel.updateOne({ "_id": idUser }, { $push: { productos: productoSeleccionado } })
     } catch (error) {
       throw error;
     }
@@ -117,8 +117,8 @@ class DaoCarrito {
 
     try {
       await this.carritoModel.updateOne(
-        { _id: idUser },
-        { $pull: { 'carrito.productos': { _id: productId } } }
+        { '_id': idUser },
+        { $pull: { "productos": { "_id" :productId } } }
       );
     } catch (error) {
       throw error;
