@@ -2,21 +2,16 @@
 const moment = require("moment")
 
 
-const admin = require("firebase-admin");
+ const admin = require("firebase-admin");
 
-const serviceAccount = require("./ecommerce-coder-6022d-firebase-adminsdk-x96wj-68b3c16ba8.json");
+//  const ProductsFB = require("./ProductoFB");
 
-const ProductsFB = require("./ProductoFB");
-const product = new ProductsFB();
 
 class DaoCarritoFB {
 
 
   constructor() {
-    // this.productos = [];
-    admin.initializeApp({
-      credential: admin.credential.cert(serviceAccount)
-    });
+
     this.db = admin.firestore();
     this.query = this.db.collection("carritos")
 
@@ -62,7 +57,6 @@ class DaoCarritoFB {
   async addCarrito() {
     try {
       const newCarrito = {
-        _id: new mongoose.Types.ObjectId().toHexString(),
         productos: [],
         timestamp: `${moment().format("DD MM YYYY hh:mm")}`
       }
@@ -89,9 +83,14 @@ class DaoCarritoFB {
 
     let productoSeleccionado;
 
-    try {
-      productoSeleccionado = await product.getById(idProduct)
+    const productos = admin.firestore().collection("productos")
 
+  
+
+   
+    try {
+      const docId = productos.doc(idProduct)
+      productoSeleccionado = await docId.get();
     } catch (error) {
       throw error;
     }
@@ -100,7 +99,7 @@ class DaoCarritoFB {
    
       const docId = this.query.doc(idUser)
       await docId.update({
-        productos: admin.firestore.FieldValue.arrayUnion(productoSeleccionado)
+        productos: admin.firestore.FieldValue.arrayUnion(productoSeleccionado.data())
       })
     } catch (error) {
       throw error;
@@ -115,7 +114,7 @@ class DaoCarritoFB {
     try {
       const docId = this.query.doc(idUser)
       await docId.update({
-        array: FieldValue.arrayRemove(productId)
+        productos: admin.firestore.FieldValue.arrayRemove(productId)
      });
 
     } catch (error) {
