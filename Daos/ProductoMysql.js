@@ -59,7 +59,9 @@ class ProductoMysql {
         try {
             const id = parseInt(productId);
             const getProduct = await this.mysqlDB.from('productos').where({id: id});
-            if(getProduct.length == 0) return undefined;
+ 
+            if(getProduct.length == 0) 
+            return undefined;
             return getProduct;
         } catch (error) {
             throw error;

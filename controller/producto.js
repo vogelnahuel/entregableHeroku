@@ -97,18 +97,6 @@ const productoDelete = async (req, res, next) => {
   const idParam = req.params.id;
   await product.delete(idParam);
   res.json({text:`eliminado con exito ${idParam}`})
-
-  // const eliminado = filtrar(productos, idParam);
-
-  // if (eliminado?.httpStatusCode) {
-  //   return next(eliminado);
-  // }
-  // const todosMenosEliminado = productos.filter(
-  //   (producto) => producto.id !== idParam
-  // );
-  // productos = todosMenosEliminado;
-  // await archivo.crearArchivoYsobreEscribir(rutaProductos, productos);
-  // res.json(eliminado[0]);
 };
 
 module.exports = {

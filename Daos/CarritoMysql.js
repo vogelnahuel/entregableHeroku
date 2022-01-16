@@ -22,90 +22,152 @@ VALUES ("12312313"); */
  * INSERT INTO carritosproductos (idCarrito,idProductos,nombre,precio,stock,foto,codigo,descripcion,timestamp)
     VALUES (1,1,"test", 100, 10, "urlfoto","codigotest","descripcionTEST","12312313");
  */
+/**
+ * 
+ * SELECT c.*,cp.nombre,cp.precio,cp.stock,cp.foto,cp.codigo,cp.descripcion,cp.timestamp,cp.idProductos 
+    FROM carritos as c
+    INNER JOIN carritosproductos as cp
+    ON c.id = cp.idCarrito
+    where c.id={id parametro}
+ */
 
-    
-
-const knex = require('knex');
-const moment = require('moment')
+const knex = require("knex");
+const moment = require("moment");
 
 class ProductoMysql {
+  constructor() {
+    this.mysqlDB = knex({
+      client: "mysql",
+      connection: {
+        host: "brdgiivvhujleqo6nc4k-mysql.services.clever-cloud.com",
+        user: "u4y7zlutps5zufph",
+        password: "fIeuBOXquhu7mSRk1OtR",
+        database: "brdgiivvhujleqo6nc4k",
+      },
+    });
+  }
 
-    constructor(){
-        this.mysqlDB = knex({
-            client: 'mysql',
-            connection: {
-            host: 'brdgiivvhujleqo6nc4k-mysql.services.clever-cloud.com',
-            user: 'u4y7zlutps5zufph',
-            password: 'fIeuBOXquhu7mSRk1OtR',
-            database: 'brdgiivvhujleqo6nc4k' }
-        })
+  async get() {
+    try {
+      const productsList = await this.mysqlDB
+        .select(
+          "c.*,cp.nombre,cp.precio,cp.stock,cp.foto,cp.codigo,cp.descripcion,cp.timestamp,cp.idProductos"
+        )
+        .from(" carritos as c")
+        .join("carritosproductos as cp", "c.id", "=", "cp.idCarrito")
+        .orderBy("cp.idCarrito", "desc");
+
+      if (productsList.length == 0)
+        throw {
+          status: 404,
+          msg: "Todavia no hay carritos cargados en tu base de datos",
+        };
+
+      return productsList;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async getById(IdCarrito) {
+    try {
+      const id = parseInt(IdCarrito);
+      let getCarrito = await this.mysqlDB
+        .select("c.*")
+        .from(" carritos as c")
+        .where({ "c.id": id });
+
+      const getCarritoProductos = await this.mysqlDB
+        .select(
+          "cp.nombre",
+          "cp.precio",
+          "cp.stock",
+          "cp.foto",
+          "cp.codigo",
+          "cp.descripcion",
+          "cp.timestamp",
+          "cp.idProductos as id"
+        )
+        .from(" carritos as c")
+        .join("carritosproductos as cp", "c.id", "=", "cp.idCarrito")
+        .where({ "c.id": id })
+        .orderBy("cp.idCarrito", "desc");
+
+      if (getCarritoProductos.length == 0) {
+        getCarrito = Object.values(JSON.parse(JSON.stringify(getCarrito)));
+        getCarrito[0].productos = [];
+        return getCarrito;
+      }
+      getCarrito = Object.values(JSON.parse(JSON.stringify(getCarrito)));
+      getCarrito[0].productos = getCarritoProductos;
+      return getCarrito;
+    } catch (error) {
+      throw error;
+    }
+  }
+  async addCarrito() {
+    try {
+      const newCarrito = {
+        id: this.mysqlDB.default,
+        timestamp: `${moment().format("DD MM YYYY hh:mm")}`,
+      };
+      await this.mysqlDB.from("carritos").insert(newCarrito);
+      return newCarrito;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async addProduct(idUser, idProduct) {
+    let productoSeleccionado;
+
+    try {
+      const id = parseInt(idProduct);
+      productoSeleccionado = await this.mysqlDB
+        .from("productos")
+        .where({ id: id });
+    } catch (error) {
+      throw error;
     }
 
-    async get() {
-        try {
-            const productsList = await this.mysqlDB.from('productos').select();
-            if(productsList.length == 0) throw({
-                status: 404,
-                msg: 'Todavia no hay productos cargados en tu base de datos'
-            })
+    try {
+      productoSeleccionado=Object.values(JSON.parse(JSON.stringify(productoSeleccionado)))
+      productoSeleccionado[0].id = this.mysqlDB.default;
+      productoSeleccionado[0].idProductos = parseInt(idProduct);
+      productoSeleccionado[0].idCarrito = parseInt(idUser);
 
-            return productsList;
-       } catch(error) {
-            throw error;
-       }
+      
+
+      const addNewProduct = await this.mysqlDB
+        .from("carritosproductos")
+        .insert(productoSeleccionado[0]);
+      return addNewProduct;
+    } catch (error) {
+      throw error;
     }
+  }
 
-    async getById(productId){
-        try {
-            const id = parseInt(productId);
-            const getProduct = await this.mysqlDB.from('productos').where({id: id});
-            if(getProduct.length == 0) return undefined;
-            return getProduct;
-        } catch (error) {
-            throw error;
-        }
+  async delete(productId) {
+    try {
+      const id = parseInt(productId);
+      await this.mysqlDB("carritos").where({ id: id }).del();
+    } catch (error) {
+      throw error;
     }
+  }
 
-    async add(data) {
-        try {
-            const newProduct = {
-                id: this.mysqlDB.default,
-                nombre: data.nombre,
-                descripcion: data.descripcion,
-                codigo: data.codigo,
-                foto: data.foto,
-                precio: data.precio,
-                stock: data.stock,
-                timestamp: `${moment().format('DD MM YYYY hh:mm')}`
-            }
-            const addNewProduct = await this.mysqlDB.from('productos').insert(newProduct);
-            return addNewProduct;
-        } catch (error) {
-            throw error
-        }
+  async deleteProduct(idUser, productId) {
+    try {
+      const User = parseInt(idUser);
+      const idProduct = parseInt(productId);
+      await this.mysqlDB("carritosproductos")
+        .where({ idCarrito: User })
+        .andWhere({ idProductos: idProduct })
+        .del();
+    } catch (error) {
+      throw error;
     }
-    
-    async delete(productId) {
-        try {
-            const id = parseInt(productId);
-            await this.mysqlDB('productos').where({id: id}).del();
-        } catch (error) {
-            throw error;
-        }
-    }
-
-    async update(productId, newData) {
-        try {
-            const id = parseInt(productId);
-            const update = await this.mysqlDB('productos').where({id: id}).update(newData);
-            return update;
-        } catch (error) {
-            throw error;
-        }
-    }
-
-
-
+  }
 }
 
-module.exports =ProductoMysql;
+module.exports = ProductoMysql;
