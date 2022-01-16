@@ -1,29 +1,15 @@
 const { filtrar } = require("../utils/utils");
 
-//inicializacion de variables donde se guardan id y los productos
-let productos = [];
-
 const Producto = require("../model/productos");
 
 const {product} = require("../Daos/index");
 
-
-
-
-
 const productoGet = async (req, res, next) => {
 
   const idParam = req.params.id;
-
-  // let contenidoProductosArchivo = await archivo.leerArchivo(
-  //   rutaProductos,
-  //   codificacion
-  // );
-
-  let contenidoProductos = await product.get();
+  let contenidoProductos = await product.get(idParam);
 
   if (idParam) {
-
     const filtrado = filtrar(contenidoProductos, idParam);
     if (filtrado?.httpStatusCode) {
       return next(filtrado);
@@ -59,10 +45,7 @@ const productoPost = async (req, res, next) => {
     timestamp,
   });
 
-  // productos.push(nuevoProducto);
   await product.add(nuevoProducto);
-
-  // await archivo.crearArchivoYsobreEscribir(rutaProductos, productos);
 
   return res.json(nuevoProducto);
 };
@@ -72,13 +55,8 @@ const productoPut = async (req, res, next) => {
   const foto = req.file ? req.file : req.body.foto;
 
   const idParam = req.params.id;
-
  
   const filtrado = await product.getById(idParam);
-  // const filtrado = filtrar(productos, idParam);
-  // if (filtrado?.httpStatusCode) {
-  //   return next(filtrado);
-  // }
 
   const { nombre, descripcion, codigo, precio, stock } = req.body;
 
@@ -91,21 +69,6 @@ const productoPut = async (req, res, next) => {
   const fotoInsert = foto ? foto.filename : filtrado[0].foto;
   const timestamp = Date.now();
 
-  // const idAFiltrar = productos.findIndex(
-  //   (contenedor) => contenedor.id == idParam
-  // );
-
-  // productos[idAFiltrar].actualizarProducto({
-  //   nombre: nombreInsert,
-  //   descripcion: descripcionInsert,
-  //   codigo: codigoInsert,
-  //   precio: precioInsert,
-  //   stock: stockInsert,
-  //   foto: fotoInsert,
-  //   timestamp,
-  //   id: idParam,
-  // });
-
     await product.update(idParam,{
          nombre: nombreInsert,
          descripcion: descripcionInsert,
@@ -113,11 +76,9 @@ const productoPut = async (req, res, next) => {
          precio: precioInsert,
          stock: stockInsert,
          foto: fotoInsert,
-         _id: idParam,
+        //  id: idParam,//ver _id
          timestamp,
        })
-
-  // await archivo.crearArchivoYsobreEscribir(rutaProductos, productos);
 
   res.json({
     nombre: nombreInsert,

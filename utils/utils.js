@@ -6,7 +6,8 @@ const filtrar = (array, idParam) => {
     error.httpStatusCode = 404;
     return error;
   }
-  const filtrado = array.filter((array) => array.id === idParam);
+  const filtrado = array.filter((array) => array.id == idParam);
+
   if (filtrado.length === 0) {
     const error = new Error("elemento  no encontrado");
     error.httpStatusCode = 404;

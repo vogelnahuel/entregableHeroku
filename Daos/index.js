@@ -1,10 +1,10 @@
 const ProductMongo = require("./ProductoMongo")
 const ProductFirebase = require("./ProductoFB")
-const ProductFile = require("./ProductoFile")
+const ProductMysql = require("./ProductoMysql")
 
 const CarritoMongo = require("./CarritoMongo")
 const CarritoFirebase = require("./CarritoFB")
-const CarritoFile = require("./CarritoFile")
+const CarritoMysql = require("./CarritoMysql")
 
 let product
 let carrito
@@ -20,9 +20,9 @@ switch (process.env.DATABASE) {
         product = new ProductMongo()
         carrito = new CarritoMongo();
         break;
-    case "file":
-        product = new ProductFile()
-        carrito = new CarritoFile();
+    case "mysql":
+        product = new ProductMysql()
+        carrito = new CarritoMysql();
         break;
 
     default:
