@@ -1,78 +1,92 @@
+
 const moment = require("moment")
-const mongoose = require("mongoose");
-const ProductsMongo = require("./ProductoMongo");
-const product = new ProductsMongo();
-const ObjectId = require('mongodb').ObjectId;
-
-const carritoSchema = new mongoose.Schema({
-  _id: mongoose.Schema.Types.ObjectId,
-  productos: { type: Array, required: true },
-  timestamp: {
-    type: String,
-    required: true,
-    default: moment().format("DD/MM/YYYY HH:mm:ss"),
-  },
-});
 
 
-class DaoCarrito {
-  mongoDB
-  carritoModel;
+const admin = require("firebase-admin");
+
+const serviceAccount = require("./ecommerce-coder-6022d-firebase-adminsdk-x96wj-68b3c16ba8.json");
+
+const ProductsFB = require("./ProductoFB");
+const product = new ProductsFB();
+
+class DaoCarritoFB {
+
 
   constructor() {
-    this.productos = [];
-    this.mongoDB = `mongodb+srv://nahuel:nahuel@cluster0.4gz4u.mongodb.net/ecommerce?retryWrites=true&w=majority`
-    mongoose.connect(this.mongoDB);
-    this.carritoModel = mongoose.model("carritos", carritoSchema);
+    // this.productos = [];
+    admin.initializeApp({
+      credential: admin.credential.cert(serviceAccount)
+    });
+    this.db = admin.firestore();
+    this.query = this.db.collection("carritos")
+
 
   }
-
   async get() {
     try {
-      const carritoList = await this.carritoModel.find({});
-      if (carritoList.length == 0)
+      const querySnapshot = await this.query.get()
+      let docs = querySnapshot.docs;
+      if (docs.length == 0)
         throw {
           status: 404,
-          msg: "Todavia no hay carritoList cargados en tu base de datos",
+          msg: "Todavia no hay carritos cargados en tu base de datos",
         };
 
-      return carritoList;
+      const response = docs.map((doc) => ({
+        id: doc.id,
+        productos: doc.data().productos,
+        timestamp: doc.data().timestamp
+      }))
+      return response;
     } catch (error) {
       throw error;
     }
   }
 
-  async getById(IdCarrito) {
+  async getById(productId) {
     try {
+      const docId = this.query.doc(productId)
+      const getProduct = await docId.get();
 
-      const getCarrito = await this.carritoModel.findById(IdCarrito);
-      if (!getCarrito)
+      if (!getProduct)
         throw {
           status: 404,
           msg: "El carrito solicitado no existe",
         };
-      return getCarrito;
+      return getProduct.data();
     } catch (error) {
       throw error;
     }
   }
-  async addCarrito() {
 
+  async addCarrito() {
     try {
       const newCarrito = {
         _id: new mongoose.Types.ObjectId().toHexString(),
         productos: [],
         timestamp: `${moment().format("DD MM YYYY hh:mm")}`
       }
-      const addCarrito = await this.carritoModel.create(newCarrito);
-      return addCarrito;
+      let doc = this.query.doc();
+      await doc.create(newCarrito)
+      return newCarrito;
+    } catch (error) {
+      throw error;
+    }
+  }
+  async delete(carritoId) {
+    try {
+      let doc = this.query.doc(carritoId)
+      await doc.delete()
     } catch (error) {
       throw error;
     }
   }
 
 
+
+
   async addProduct(idUser, idProduct) {
+
     let productoSeleccionado;
 
     try {
@@ -83,44 +97,27 @@ class DaoCarrito {
     }
 
     try {
-      await this.carritoModel.updateOne({ "_id": idUser }, { $push: { productos: productoSeleccionado } })
+   
+      const docId = this.query.doc(idUser)
+      await docId.update({
+        productos: admin.firestore.FieldValue.arrayUnion(productoSeleccionado)
+      })
     } catch (error) {
       throw error;
     }
 
 
   }
-  // async update(productId, newData) {
-  //   const oldData = await this.getById(productId);
-  //   await this.delete(productId);
-  //   const updateData = { ...oldData, ...newData };
-  //   this.productos.push(updateData);
-  //   await this.add(updateData)
-  //   this.productos = this.productos.sort((productA, productB) => productA.id - productB.id);
 
-  //   return updateData;
-  // }
-
-  async delete(productId) {
-
-    const id = productId;
-
-    this.productos = this.productos.filter((aProduct) => aProduct._id !== id);
-    try {
-      await this.carritoModel.deleteOne({ _id: productId });
-    } catch (error) {
-      throw error;
-    }
-
-  }
 
   async deleteProduct(idUser, productId) {
 
     try {
-      await this.carritoModel.updateOne(
-        { '_id': idUser },
-        { $pull: { "productos": { _id :ObjectId(productId) } } }
-      );
+      const docId = this.query.doc(idUser)
+      await docId.update({
+        array: FieldValue.arrayRemove(productId)
+     });
+
     } catch (error) {
       throw error;
     }
@@ -131,4 +128,4 @@ class DaoCarrito {
 
 }
 
-module.exports = DaoCarrito
+module.exports = DaoCarritoFB

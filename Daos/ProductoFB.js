@@ -18,7 +18,7 @@ class ProductsFB {
     });
     this.db = admin.firestore();
     this.query = this.db.collection("productos")
-    // this.db.doc().create({})
+
   }
 
   async get() {
