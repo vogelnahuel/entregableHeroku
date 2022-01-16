@@ -4,18 +4,11 @@ const moment = require("moment")
 
  const admin = require("firebase-admin");
 
-//  const ProductsFB = require("./ProductoFB");
-
-
 class DaoCarritoFB {
 
-
   constructor() {
-
     this.db = admin.firestore();
     this.query = this.db.collection("carritos")
-
-
   }
   async get() {
     try {
@@ -85,9 +78,6 @@ class DaoCarritoFB {
 
     const productos = admin.firestore().collection("productos")
 
-  
-
-   
     try {
       const docId = productos.doc(idProduct)
       productoSeleccionado = await docId.get();
@@ -96,25 +86,28 @@ class DaoCarritoFB {
     }
 
     try {
-   
+  
+      const objProduct = {
+        ...productoSeleccionado.data(),
+        _id:productoSeleccionado.id
+      }
       const docId = this.query.doc(idUser)
       await docId.update({
-        productos: admin.firestore.FieldValue.arrayUnion(productoSeleccionado.data())
+        productos: admin.firestore.FieldValue.arrayUnion(objProduct)
       })
     } catch (error) {
       throw error;
     }
 
-
   }
 
-
   async deleteProduct(idUser, productId) {
+
 
     try {
       const docId = this.query.doc(idUser)
       await docId.update({
-        productos: admin.firestore.FieldValue.arrayRemove(productId)
+        productos: admin.firestore.FieldValue.arrayRemove({"id":productId})
      });
 
     } catch (error) {
@@ -122,8 +115,6 @@ class DaoCarritoFB {
     }
 
   }
-
-
 
 }
 

@@ -1,18 +1,11 @@
 
- const moment = require("moment")
-
-
+const moment = require("moment")
 const admin = require("firebase-admin");
-
 const serviceAccount = require("./ecommerce-coder-6022d-firebase-adminsdk-x96wj-68b3c16ba8.json");
-
-
-
 
 class ProductsFB {
 
-  constructor(local = false) {
-
+  constructor() {
     admin.initializeApp({
       credential: admin.credential.cert(serviceAccount)
     });
@@ -21,28 +14,35 @@ class ProductsFB {
 
   }
 
-  async get() {
+  async get(idParam) {
     try {
-      const querySnapshot = await this.query.get()
-      let docs = querySnapshot.docs;
-      if (docs.length == 0)
-        throw {
-          status: 404,
-          msg: "Todavia no hay productos cargados en tu base de datos",
-        };
-
-      const response= docs.map((doc)=>({
-        id:doc.id,
-        nombre:doc.data().nombre ,
-        precio:doc.data().precio ,
-        stock:doc.data().stock  ,
-        foto: doc.data().foto ,
-        codigo:doc.data().codigo  ,
-        descripcion:doc.data().descripcion  ,
-        timestamp:doc.data().timestamp 
-
-        }))
-        return response;
+      if(idParam){
+        const result = await this.getById(idParam);
+        return result;
+      }
+      else{
+        const querySnapshot = await this.query.get()
+        let docs = querySnapshot.docs;
+        if (docs.length == 0)
+          throw {
+            status: 404,
+            msg: "Todavia no hay productos cargados en tu base de datos",
+          };
+  
+        const response= docs.map((doc)=>({
+          id:doc.id,
+          nombre:doc.data().nombre ,
+          precio:doc.data().precio ,
+          stock:doc.data().stock  ,
+          foto: doc.data().foto ,
+          codigo:doc.data().codigo  ,
+          descripcion:doc.data().descripcion  ,
+          timestamp:doc.data().timestamp 
+  
+          }))
+          return response;
+      }
+  
     } catch (error) {
       throw error;
     }
@@ -94,6 +94,7 @@ class ProductsFB {
 
   async update(productId, newData) {
     try {
+      newData._id=productId
       let doc= this.query.doc(productId)
       let item = await doc.update(newData);
       return item;

@@ -87,19 +87,7 @@ class DaoCarrito {
     } catch (error) {
       throw error;
     }
-
-
   }
-  // async update(productId, newData) {
-  //   const oldData = await this.getById(productId);
-  //   await this.delete(productId);
-  //   const updateData = { ...oldData, ...newData };
-  //   this.productos.push(updateData);
-  //   await this.add(updateData)
-  //   this.productos = this.productos.sort((productA, productB) => productA.id - productB.id);
-
-  //   return updateData;
-  // }
 
   async delete(productId) {
 
@@ -119,16 +107,13 @@ class DaoCarrito {
     try {
       await this.carritoModel.updateOne(
         { '_id': idUser },
-        { $pull: { "productos": { _id :ObjectId(productId) } } }
+        { $pull: { "productos": { _id: ObjectId(productId) } } }
       );
     } catch (error) {
       throw error;
     }
 
   }
-
-
-
 }
 
 module.exports = DaoCarrito

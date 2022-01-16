@@ -19,27 +19,34 @@ const productsSchema = new mongoose.Schema({
 class ProductsMongo {
   mongoDB;
   productsModel;
-  constructor(local = false) {
-    // if (local) {
-    //   this.mongoDB = `mongodb://localhost:27017/ecommerce`;
-    // } else {
+  constructor() {
     this.mongoDB = `mongodb+srv://nahuel:nahuel@cluster0.4gz4u.mongodb.net/ecommerce?retryWrites=true&w=majority`
-    //   this.mongoDB = `mongodb+srv://roboti:CoderHouseTest1234@cluster0.nodly.mongodb.net/ecommerceCH?retryWrites=true&w=majority`;
-    // }
     mongoose.connect(this.mongoDB);
     this.productsModel = mongoose.model("productos", productsSchema);
   }
 
-  async get() {
+  async get(idParam) {
     try {
-      const productsList = await this.productsModel.find({}).sort({nombre:1});
-      if (productsList.length == 0)
-        throw {
-          status: 404,
-          msg: "Todavia no hay productos cargados en tu base de datos",
-        };
+      if (idParam) {
+        const productList = await this.getById(idParam);
+        if (productList.length == 0)
+          throw {
+            status: 404,
+            msg: " no existe producto con ese id cargados en tu base de datos",
+          };
+        return productList
+      }
+      else {
+        const productsList = await this.productsModel.find({}).sort({ nombre: 1 });
+        if (productsList.length == 0)
+          throw {
+            status: 404,
+            msg: "Todavia no hay productos cargados en tu base de datos",
+          };
 
-      return productsList;
+        return productsList;
+      }
+
     } catch (error) {
       throw error;
     }
@@ -90,6 +97,7 @@ class ProductsMongo {
 
   async update(productId, newData) {
     try {
+      newData._id = productId;
       const update = await this.productsModel.findOneAndUpdate(
         { _id: productId },
         newData,
@@ -101,4 +109,4 @@ class ProductsMongo {
     }
   }
 }
-module.exports =  ProductsMongo ;
+module.exports = ProductsMongo;

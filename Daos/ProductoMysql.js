@@ -107,8 +107,6 @@ class ProductoMysql {
         }
     }
 
-
-
 }
 
 module.exports =ProductoMysql;

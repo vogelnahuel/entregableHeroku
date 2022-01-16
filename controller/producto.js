@@ -8,16 +8,8 @@ const productoGet = async (req, res, next) => {
 
   const idParam = req.params.id;
   let contenidoProductos = await product.get(idParam);
-
-  if (idParam) {
-    const filtrado = filtrar(contenidoProductos, idParam);
-    if (filtrado?.httpStatusCode) {
-      return next(filtrado);
-    }
-    res.json(filtrado[0]);
-  } else {
-    res.json(contenidoProductos);
-  }
+  res.json(contenidoProductos);
+  
 };
 
 //mandar como nombre thumbnail  el campo si se utiliza desde postman la key para el File
@@ -76,7 +68,6 @@ const productoPut = async (req, res, next) => {
          precio: precioInsert,
          stock: stockInsert,
          foto: fotoInsert,
-        //  id: idParam,//ver _id
          timestamp,
        })
 
@@ -87,7 +78,6 @@ const productoPut = async (req, res, next) => {
     precio: precioInsert,
     stock: stockInsert,
     foto: fotoInsert,
-    _id: idParam,
     timestamp,
   });
 };
