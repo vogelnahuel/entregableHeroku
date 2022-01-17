@@ -29,7 +29,7 @@ class ProductsMongo {
     try {
       if (idParam) {
         const productList = await this.getById(idParam);
-        if (productList.length == 0)
+        if (!productList)
           throw {
             status: 404,
             msg: " no existe producto con ese id cargados en tu base de datos",

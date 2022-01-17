@@ -46,4 +46,11 @@ const isAdmin = (req, res, next) => {
 
 }
 
-module.exports = { filtrar, inicializacionFile, isAdmin };
+const crearError=(errorMsg,msgCustom) =>{
+  errorMsg.msg  = errorMsg.msg ? errorMsg.msg : msgCustom
+  const error = new Error(errorMsg.msg);
+  error.status = errorMsg.status;
+  return error;
+}
+
+module.exports = { filtrar, inicializacionFile, isAdmin,crearError };

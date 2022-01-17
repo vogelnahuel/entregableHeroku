@@ -1,4 +1,4 @@
-const { filtrar } = require("../utils/utils");
+const {crearError } = require("../utils/utils");
 
 const Producto = require("../model/productos");
 
@@ -10,9 +10,7 @@ const productoGet = async (req, res, next) => {
   try {
     contenidoProductos = await product.get(idParam);
   } catch (errorMsg) {
-    const error = new Error(errorMsg.msg);
-    error.status = errorMsg.status;
-    return next(error);
+    return next(crearError(errorMsg,"no se encontro el producto"));
   }
 
   res.json(contenidoProductos);
@@ -23,9 +21,7 @@ const productoPost = async (req, res, next) => {
   const foto = req.file ? req.file : req.body.foto; // para saber si viene de postman o de un form
 
   if (!foto) {
-    const error = new Error(" enviar file :( ");
-    error.httpStatusCode = 400;
-    return next(error);
+    return next(errorMsg," enviar file :( ");
   }
 
   const timestamp = Date.now();
@@ -46,10 +42,8 @@ const productoPost = async (req, res, next) => {
   try {
     await product.add(nuevoProducto);
   } catch (errorMsg) {
-    errorMsg.msg  = errorMsg.msg ? errorMsg.msg : "error"
-    const error = new Error(errorMsg.msg);
-    error.status = errorMsg.status;
-    return next(error);
+
+    return next(crearError(errorMsg,"error"));
   }
 
   return res.json(nuevoProducto);
@@ -63,10 +57,7 @@ const productoPut = async (req, res, next) => {
   try {
     filtrado = await product.getById(idParam);
   } catch (errorMsg) {
-    errorMsg.msg  = errorMsg.msg ? errorMsg.msg : "no se encontro el producto"
-    const error = new Error(errorMsg.msg);
-    error.status = errorMsg.status;
-    return next(error);
+    return next(crearError(errorMsg,"no se encontro el producto"));
   }
 
   const { nombre, descripcion, codigo, precio, stock } = req.body;
@@ -91,10 +82,7 @@ const productoPut = async (req, res, next) => {
       timestamp,
     });
   } catch (errorMsg) {
-    errorMsg.msg  = errorMsg.msg ? errorMsg.msg : "error"
-    const error = new Error(errorMsg.msg);
-    error.status = errorMsg.status;
-    return next(error);
+    return next(crearError(errorMsg,"error"));
   }
 
   res.json({
@@ -113,10 +101,7 @@ const productoDelete = async (req, res, next) => {
   try {
     await product.delete(idParam);
   } catch (errorMsg) {
-    errorMsg.msg  = errorMsg.msg ? errorMsg.msg : "error"
-    const error = new Error(errorMsg.msg);
-    error.status = errorMsg.status;
-    return next(error);
+    return next(crearError(errorMsg,"error"));
   }
  
   res.json({ text: `eliminado con exito ${idParam}` });
