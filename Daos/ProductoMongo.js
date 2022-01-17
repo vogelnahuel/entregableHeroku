@@ -21,7 +21,7 @@ class ProductsMongo {
   productsModel;
   constructor() {
     this.mongoDB = `mongodb+srv://nahuel:nahuel@cluster0.4gz4u.mongodb.net/ecommerce?retryWrites=true&w=majority`
-    mongoose.connect(this.mongoDB);
+    mongoose.connect(process.env.MONGODB_URI || this.mongoDB);
     this.productsModel = mongoose.model("productos", productsSchema);
   }
 
