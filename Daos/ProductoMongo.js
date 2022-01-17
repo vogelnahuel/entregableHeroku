@@ -89,7 +89,12 @@ class ProductsMongo {
 
   async delete(productId) {
     try {
-      await this.productsModel.deleteOne({ _id: productId });
+     const result =  await this.productsModel.findOneAndDelete({ _id: productId });
+     if (!result)
+     throw {
+       status: 404,
+       msg: "El producto solicitado no existe",
+     };
     } catch (error) {
       throw error;
     }
@@ -103,8 +108,14 @@ class ProductsMongo {
         newData,
         { new: true }
       );
+      if (!update)
+      throw {
+        status: 404,
+        msg: "El producto solicitado no existe",
+      };
       return update;
     } catch (error) {
+     
       throw error;
     }
   }

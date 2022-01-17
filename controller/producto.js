@@ -2,19 +2,24 @@ const { filtrar } = require("../utils/utils");
 
 const Producto = require("../model/productos");
 
-const {product} = require("../Daos/index");
+const { product } = require("../Daos/index");
 
 const productoGet = async (req, res, next) => {
-
   const idParam = req.params.id;
-  let contenidoProductos = await product.get(idParam);
+  let contenidoProductos;
+  try {
+    contenidoProductos = await product.get(idParam);
+  } catch (errorMsg) {
+    const error = new Error(errorMsg.msg);
+    error.status = errorMsg.status;
+    return next(error);
+  }
+
   res.json(contenidoProductos);
-  
 };
 
 //mandar como nombre thumbnail  el campo si se utiliza desde postman la key para el File
 const productoPost = async (req, res, next) => {
-
   const foto = req.file ? req.file : req.body.foto; // para saber si viene de postman o de un form
 
   if (!foto) {
@@ -37,39 +42,60 @@ const productoPost = async (req, res, next) => {
     timestamp,
   });
 
-  await product.add(nuevoProducto);
+
+  try {
+    await product.add(nuevoProducto);
+  } catch (errorMsg) {
+    errorMsg.msg  = errorMsg.msg ? errorMsg.msg : "error"
+    const error = new Error(errorMsg.msg);
+    error.status = errorMsg.status;
+    return next(error);
+  }
 
   return res.json(nuevoProducto);
 };
 
 const productoPut = async (req, res, next) => {
-
   const foto = req.file ? req.file : req.body.foto;
 
   const idParam = req.params.id;
- 
-  const filtrado = await product.getById(idParam);
+  let filtrado;
+  try {
+    filtrado = await product.getById(idParam);
+  } catch (errorMsg) {
+    errorMsg.msg  = errorMsg.msg ? errorMsg.msg : "no se encontro el producto"
+    const error = new Error(errorMsg.msg);
+    error.status = errorMsg.status;
+    return next(error);
+  }
 
   const { nombre, descripcion, codigo, precio, stock } = req.body;
 
   //solamente cambio los pasados por parametro y si no estan dejo los que ya estaban
-  const nombreInsert = nombre ? nombre : filtrado[0].nombre;
-  const descripcionInsert = descripcion ? descripcion : filtrado[0].descripcion;
-  const codigoInsert = codigo ? codigo : filtrado[0].codigo;
-  const precioInsert = precio ? precio : filtrado[0].precio;
-  const stockInsert = stock ? stock : filtrado[0].stock;
-  const fotoInsert = foto ? foto.filename : filtrado[0].foto;
+  const nombreInsert = nombre ? nombre : filtrado.nombre;
+  const descripcionInsert = descripcion ? descripcion : filtrado.descripcion;
+  const codigoInsert = codigo ? codigo : filtrado.codigo;
+  const precioInsert = precio ? precio : filtrado.precio;
+  const stockInsert = stock ? stock : filtrado.stock;
+  const fotoInsert = foto ? foto.filename : filtrado.foto;
   const timestamp = Date.now();
 
-    await product.update(idParam,{
-         nombre: nombreInsert,
-         descripcion: descripcionInsert,
-         codigo: codigoInsert,
-         precio: precioInsert,
-         stock: stockInsert,
-         foto: fotoInsert,
-         timestamp,
-       })
+  try {
+    await product.update(idParam, {
+      nombre: nombreInsert,
+      descripcion: descripcionInsert,
+      codigo: codigoInsert,
+      precio: precioInsert,
+      stock: stockInsert,
+      foto: fotoInsert,
+      timestamp,
+    });
+  } catch (errorMsg) {
+    errorMsg.msg  = errorMsg.msg ? errorMsg.msg : "error"
+    const error = new Error(errorMsg.msg);
+    error.status = errorMsg.status;
+    return next(error);
+  }
 
   res.json({
     nombre: nombreInsert,
@@ -83,10 +109,17 @@ const productoPut = async (req, res, next) => {
 };
 
 const productoDelete = async (req, res, next) => {
-
   const idParam = req.params.id;
-  await product.delete(idParam);
-  res.json({text:`eliminado con exito ${idParam}`})
+  try {
+    await product.delete(idParam);
+  } catch (errorMsg) {
+    errorMsg.msg  = errorMsg.msg ? errorMsg.msg : "error"
+    const error = new Error(errorMsg.msg);
+    error.status = errorMsg.status;
+    return next(error);
+  }
+ 
+  res.json({ text: `eliminado con exito ${idParam}` });
 };
 
 module.exports = {

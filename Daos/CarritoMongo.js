@@ -105,10 +105,17 @@ class DaoCarrito {
   async deleteProduct(idUser, productId) {
 
     try {
-      await this.carritoModel.updateOne(
+      const msg = await this.carritoModel.updateOne(
         { '_id': idUser },
         { $pull: { "productos": { _id: ObjectId(productId) } } }
       );
+
+      if(msg.modifiedCount===0){
+        throw {
+          status: 404,
+          msg: "El producto solicitado no existe en el carrito",
+        };
+      }
     } catch (error) {
       throw error;
     }
