@@ -150,7 +150,12 @@ class ProductoMysql {
   async delete(productId) {
     try {
       const id = parseInt(productId);
-      await this.mysqlDB("carritos").where({ id: id }).del();
+      const resultDelete = await this.mysqlDB("carritos").where({ id: id }).del();
+      if(resultDelete===0) 
+      throw({
+          status: 404,
+          msg: 'no existe el producto en en tu base de datos'
+      })
     } catch (error) {
       throw error;
     }

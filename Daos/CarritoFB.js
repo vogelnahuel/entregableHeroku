@@ -107,7 +107,7 @@ class DaoCarritoFB {
     try {
       const docId = this.query.doc(idUser)
       await docId.update({
-        productos: admin.firestore.FieldValue.arrayRemove({"id":productId})
+        productos: admin.firestore.FieldValue.arrayRemove({"_id":productId})
      });
 
     } catch (error) {

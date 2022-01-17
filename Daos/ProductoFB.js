@@ -18,6 +18,7 @@ class ProductsFB {
     try {
       if(idParam){
         const result = await this.getById(idParam);
+        
         return result;
       }
       else{
