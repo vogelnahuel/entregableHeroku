@@ -1,15 +1,22 @@
 const express = require("express");
-const {isAdmin} = require('../utils/utils');
-const cors = require('cors');
+const { isAdmin } = require("../utils/utils");
+const cors = require("cors");
+const passport = require('passport');
+
+require('../utils/passport')
+
 
 class Servidor {
   constructor() {
     this.app = express();
-    this.app.use(cors({origin: '*'}));
+    this.app.use(cors({ origin: "*" }));
+    this.app.use(passport.initialize())
+
     this.port = process.env.PORT;
     this.productosPath = "/api/productos";
     this.carritoPath = "/api/carrito";
-    
+    this.usersPath = "/api/users";
+
     //Middlewares
     this.middlewares();
 
@@ -23,21 +30,22 @@ class Servidor {
     this.app.use(express.json());
     //directorio publico
     this.app.use(express.static("public"));
-    //  middleware que  verifica si es admin o no 
-    this.app.use(isAdmin) 
-   
+    //  middleware que  verifica si es admin o no
+    this.app.use(isAdmin);
   }
 
   routes() {
     this.app.use(this.productosPath, require("../routes/productos"));
     this.app.use(this.carritoPath, require("../routes/carrito.js"));
+    this.app.use(this.usersPath, require("../routes/users.js"));
     //ruta por defecto en caso de no encontrarse
     this.app.all("*", (req, res) => {
-      res
-        .status(404)
-        .json({ error: -2, descripcion:`ruta ${req.url} y  método  ${req.method} no implementados` });
+      console.log(req);
+      res.status(404).json({
+        error: -2,
+        descripcion: `ruta ${req.url} y  método  ${req.method} no implementados`,
+      });
     });
-
   }
   listen() {
     this.app.listen(this.port, () => {
@@ -45,4 +53,5 @@ class Servidor {
     });
   }
 }
+
 module.exports = Servidor;

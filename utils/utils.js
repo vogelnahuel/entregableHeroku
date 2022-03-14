@@ -1,5 +1,6 @@
 const multer = require("multer");
 
+
 const filtrar = (array, idParam) => {
   if (array === undefined || array.length === 0) {
     const error = new Error("elemento  no encontrado");
@@ -29,28 +30,33 @@ const inicializacionFile = () => {
 };
 
 const isAdmin = (req, res, next) => {
-
   let administrador = req.headers?.administrador;
 
-  administrador = administrador ? JSON.parse(administrador) : false ;
+  administrador = administrador ? JSON.parse(administrador) : false;
 
   if (!administrador) {
-
-    res
-      .status(404)
-      .send({ error: -1, descripcion: `ruta ${req.originalUrl} y  método  ${req.method} no autorizada` });
-  }
-  else {
+    res.status(404).send({
+      error: -1,
+      descripcion: `ruta ${req.originalUrl} y  método  ${req.method} no autorizada`,
+    });
+  } else {
     next();
   }
+};
 
-}
-
-const crearError=(errorMsg,msgCustom) =>{
-  errorMsg.msg  = errorMsg.msg ? errorMsg.msg : msgCustom
+const crearError = (errorMsg, msgCustom) => {
+  errorMsg.msg = errorMsg.msg ? errorMsg.msg : msgCustom;
   const error = new Error(errorMsg.msg);
   error.status = errorMsg.status;
   return error;
-}
+};
 
-module.exports = { filtrar, inicializacionFile, isAdmin,crearError };
+
+
+module.exports = {
+  filtrar,
+  inicializacionFile,
+  isAdmin,
+  crearError,
+
+};
