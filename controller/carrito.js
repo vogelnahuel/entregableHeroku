@@ -1,11 +1,15 @@
 const { carrito } = require("../Daos/index");
 const { crearError } = require("../utils/utils");
+const log4js = require('log4js')
+const loggerFile = log4js.getLogger('archivo')
+
 const carritoPost = async (req, res,next) => {
   const idParam = req.body.idUser; //id usuario
   let createCarrito;
   try {
     createCarrito = await carrito.addCarrito(idParam);
   } catch (errorMsg) {
+    loggerFile.warn(error);
     return next(crearError(errorMsg,"no se pudo crear"));
   }
 
@@ -17,6 +21,7 @@ const carritoDelete = async (req, res, next) => {
   try {
     await carrito.delete(idParam);
   } catch (errorMsg) {
+    loggerFile.warn(error);
     return next(crearError(errorMsg,"no se pudo eliminar"));
   }
 
@@ -29,6 +34,7 @@ const carritoGet = async (req, res, next) => {
   try {
     carritoGet = await carrito.getById(idParam);
   } catch (errorMsg) {
+    loggerFile.warn(error);
     return next(crearError(errorMsg,"no se encontro el carrito"));
   }
 
@@ -42,6 +48,7 @@ const carritoProductoPost = async (req, res, next) => {
   try {
     await carrito.addProduct(idCarrito, idParamProd);
   } catch (errorMsg) {
+    loggerFile.warn(error);
     return next(crearError(errorMsg,"no se encontro el carrito"));
   }
 
@@ -54,6 +61,7 @@ const carritoProductoDelete = async (req, res, next) => {
   try {
     await carrito.deleteProduct(idParam, idParamProd);
   } catch (errorMsg) {
+    loggerFile.warn(error);
     return next(crearError(errorMsg,"no se encontro el carrito"));
   }
 

@@ -3,7 +3,8 @@ const { crearError } = require("../utils/utils");
 const {usersDaoVar} = require('../Daos/index')
 const { carrito } = require("../Daos/index");
 const { generateToken } = require("../utils/token");
-
+const log4js = require('log4js')
+const loggerFile = log4js.getLogger('archivo')
 
 const  smtpTransport = createTransport({
   host: "smtp.gmail.com",
@@ -30,7 +31,7 @@ const usersPostCreate = async (req, res, next) => {
 
     await smtpTransport.sendMail(MAIL_OPTIONS);
   } catch (error) {
-    console.log(error);
+    loggerFile.warn(error);
     return next(crearError(error, "error al enviar email"));
   }
 
@@ -49,7 +50,7 @@ const usersPostLogin = async (req, res, next) => {
      carritoUser = await carrito.get(res._id);
   
   } catch (error) {
-    console.log(error)
+    loggerFile.warn(error);
     return next(crearError(errorMsg,"no se pudo encontrar"));
   }
   const token = generateToken(req.body.username)
@@ -83,7 +84,7 @@ const usersPostBuy = async (req, res, next) => {
     await smtpTransport.sendMail(MAIL_OPTIONS);
 
   } catch (error) {
-    console.log(error);
+    loggerFile.warn(error);
     return next(crearError(error, "error al enviar email"));
   }
 

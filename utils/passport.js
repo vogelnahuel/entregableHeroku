@@ -3,6 +3,8 @@ const localStrategy = require("passport-local").Strategy;
 const { userModel } = require("../Daos/userMongo");
 const mongoose = require("mongoose");
 const brcypt = require('bcrypt');
+const log4js = require('log4js')
+const loggerFile = log4js.getLogger('archivo')
 
 passport.use(
   "login",
@@ -10,13 +12,13 @@ passport.use(
 
     const res =await userModel.findOne({username})
    if(!res){
-    console.log("el usuario no existe");
+    loggerFile.error("el usuario no existe");
     return done(null,false)
    }
    else{
         const compare = await brcypt.compare(password,res.password)
       if(!compare){
-        console.log("las contraseñas no son iguales");
+        loggerFile.error("las contraseñas no son iguales");
         return done(null, false);
       }
 
@@ -36,7 +38,7 @@ passport.use(
      const res = await  userModel.findOne({ username })
       
      if(res){
-       console.log("el usuario ya existe");
+      loggerFile.warn("el usuario ya existe");
        return done(null,false)
      }
  

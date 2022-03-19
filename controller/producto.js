@@ -4,12 +4,16 @@ const Producto = require("../model/productos");
 
 const { product } = require("../Daos/index");
 
+const log4js = require('log4js')
+const loggerFile = log4js.getLogger('archivo')
+
 const productoGet = async (req, res, next) => {
   const idParam = req.params.id;
   let contenidoProductos;
   try {
     contenidoProductos = await product.get(idParam);
   } catch (errorMsg) {
+    loggerFile.warn(error);
     return next(crearError(errorMsg,"no se encontro el producto"));
   }
 
@@ -42,7 +46,7 @@ const productoPost = async (req, res, next) => {
   try {
     await product.add(nuevoProducto);
   } catch (errorMsg) {
-
+    loggerFile.warn(error);
     return next(crearError(errorMsg,"error"));
   }
 
@@ -57,6 +61,7 @@ const productoPut = async (req, res, next) => {
   try {
     filtrado = await product.getById(idParam);
   } catch (errorMsg) {
+    loggerFile.warn(error);
     return next(crearError(errorMsg,"no se encontro el producto"));
   }
 
@@ -82,6 +87,7 @@ const productoPut = async (req, res, next) => {
       timestamp,
     });
   } catch (errorMsg) {
+    loggerFile.warn(error);
     return next(crearError(errorMsg,"error"));
   }
 
@@ -101,6 +107,7 @@ const productoDelete = async (req, res, next) => {
   try {
     await product.delete(idParam);
   } catch (errorMsg) {
+    loggerFile.warn(error);
     return next(crearError(errorMsg,"error"));
   }
  

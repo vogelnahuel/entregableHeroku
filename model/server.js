@@ -2,6 +2,8 @@ const express = require("express");
 const cors = require("cors");
 const passport = require('passport');
 const { verifyToken } = require("../utils/token");
+const log4js = require('log4js')
+const logger = log4js.getLogger()
 
 require('../utils/passport')
 
@@ -49,7 +51,7 @@ class Servidor {
   }
   listen() {
     this.app.listen(this.port, () => {
-      console.log("servidor corriendo en puerto:" + this.port);
+      logger.info("servidor corriendo en puerto:" + this.port)
     });
   }
 }
