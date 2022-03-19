@@ -6,22 +6,23 @@ const brcypt = require('bcrypt');
 
 passport.use(
   "login",
-  new localStrategy((username, password, done) => {
-    userModel.findOne({ username: username }, (error, user) => {
-      if (error) {
-        done(err);
-      }
+  new localStrategy(async (username, password, done) => {
 
-      if (!user) {
-        return done(null, false);
-      }
-      const compare = brcypt.compareSync(password,user.password)
+    const res =await userModel.findOne({username})
+   if(!res){
+    console.log("el usuario no existe");
+    return done(null,false)
+   }
+   else{
+        const compare = await brcypt.compare(password,res.password)
       if(!compare){
+        console.log("las contraseñas no son iguales");
         return done(null, false);
       }
 
-      return done(null, user);
-    });
+  return done(null, res);
+   }
+
   })
 );
 
@@ -32,17 +33,14 @@ passport.use(
       passReqToCallback: true,
     },
     async (req, username, password, done) => {
-      userModel.findOne({ username }, (err, user) => {
-        if (err) {
-          return done(err);
-        }
-        if (user) {
-          console.log("el usuario ya existe");
-          return done(null, false);
-        }
-      });
-
+     const res = await  userModel.findOne({ username })
+      
+     if(res){
+       console.log("el usuario ya existe");
+       return done(null,false)
+     }
  
+      
       const  passwordHash=await brcypt.hash(password, 10);
  
       const newUser = {
@@ -56,19 +54,16 @@ passport.use(
         avatar: req.body.avatar,
       };
 
-      userModel.create(newUser, (err, userWithId) => {
-        if (err) return done(err);
-
-        return done(null, userWithId);
-      });
+     const resCreate = await userModel.create(newUser);
+     return done(null,resCreate);
     }
   )
 );
-passport.serializeUser((user, done) => {
-  done(null, user._id);
+passport.serializeUser(function(user, done) {
+  done(null, user);
 });
 
-passport.deserializeUser((id, done) => {
-  const res = userSchema.findById(id, done);
-  done(null, res);
+passport.deserializeUser(function(user, done) {
+  done(null, user);
 });
+

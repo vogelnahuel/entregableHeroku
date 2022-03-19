@@ -26,9 +26,9 @@ class usersDao {
    
   }
 
-  async findByEmail(email) {
+  async findByUsername(username) {
     try {
-      const getUser = await this.usersModel.findOne(email);
+      const getUser = await this.usersModel.findOne(username);
 
       if (!getUser) return done(null, false);
 
@@ -37,8 +37,29 @@ class usersDao {
       throw error;
     }
   }
-  async post(email, done) {
+  static async  findByUsernameStatic(username) {
+    try {
+      const getUser = await mongoose.model("usuarios", userSchema).findOne(username);
 
+      if (!getUser) return done(null, false);
+
+      return getUser;
+    } catch (error) {
+      throw error;
+    }
+  }
+  async getCarrito(username) {
+    try {
+ 
+      const getUser = await this.usersModel.findOne({username});
+
+      if (!getUser) 
+      throw error;
+
+      return getUser;
+    } catch (error) {
+      throw error;
+    }
   }
 }
 

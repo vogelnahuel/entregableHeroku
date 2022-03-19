@@ -1,9 +1,10 @@
 const { carrito } = require("../Daos/index");
 const { crearError } = require("../utils/utils");
-const carritoPost = async (req, res) => {
+const carritoPost = async (req, res,next) => {
+  const idParam = req.body.idUser; //id usuario
   let createCarrito;
   try {
-    createCarrito = await carrito.addCarrito();
+    createCarrito = await carrito.addCarrito(idParam);
   } catch (errorMsg) {
     return next(crearError(errorMsg,"no se pudo crear"));
   }
@@ -34,12 +35,12 @@ const carritoGet = async (req, res, next) => {
   res.json(carritoGet);
 };
 
-//agrega de a 1 producto al carrito
+//agrega de a 1 producto al carrito idCarrito 
 const carritoProductoPost = async (req, res, next) => {
-  const { idUser } = req.body;
+  const { idCarrito } = req.body;
   const idParamProd = req.params.id;
   try {
-    await carrito.addProduct(idUser, idParamProd);
+    await carrito.addProduct(idCarrito, idParamProd);
   } catch (errorMsg) {
     return next(crearError(errorMsg,"no se encontro el carrito"));
   }

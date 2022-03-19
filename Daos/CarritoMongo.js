@@ -6,6 +6,7 @@ const ObjectId = require('mongodb').ObjectId;
 
 const carritoSchema = new mongoose.Schema({
   _id: mongoose.Schema.Types.ObjectId,
+  _idUser:{ type: mongoose.Schema.Types.ObjectId , required:true},
   productos: { type: Array, required: true },
   timestamp: {
     type: String,
@@ -56,11 +57,12 @@ class DaoCarrito {
       throw error;
     }
   }
-  async addCarrito() {
+  async addCarrito(idUser) {
 
     try {
       const newCarrito = {
         _id: new mongoose.Types.ObjectId().toHexString(),
+        _idUser: idUser,
         productos: [],
         timestamp: `${moment().format("DD MM YYYY hh:mm")}`
       }
@@ -72,7 +74,7 @@ class DaoCarrito {
   }
 
 
-  async addProduct(idUser, idProduct) {
+  async addProduct(idCarrito, idProduct) {
     let productoSeleccionado;
 
     try {
@@ -83,7 +85,7 @@ class DaoCarrito {
     }
 
     try {
-      await this.carritoModel.updateOne({ "_id": idUser }, { $push: { productos: productoSeleccionado } })
+      await this.carritoModel.updateOne({ "_id": idCarrito }, { $push: { productos: productoSeleccionado } })
     } catch (error) {
       throw error;
     }

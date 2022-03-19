@@ -1,7 +1,7 @@
 const express = require("express");
-const { isAdmin } = require("../utils/utils");
 const cors = require("cors");
 const passport = require('passport');
+const { verifyToken } = require("../utils/token");
 
 require('../utils/passport')
 
@@ -31,7 +31,7 @@ class Servidor {
     //directorio publico
     this.app.use(express.static("public"));
     //  middleware que  verifica si es admin o no
-    this.app.use(isAdmin);
+    this.app.use(verifyToken);
   }
 
   routes() {

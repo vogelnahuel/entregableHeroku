@@ -29,20 +29,6 @@ const inicializacionFile = () => {
   return storage;
 };
 
-const isAdmin = (req, res, next) => {
-  let administrador = req.headers?.administrador;
-
-  administrador = administrador ? JSON.parse(administrador) : false;
-
-  if (!administrador) {
-    res.status(404).send({
-      error: -1,
-      descripcion: `ruta ${req.originalUrl} y  método  ${req.method} no autorizada`,
-    });
-  } else {
-    next();
-  }
-};
 
 const crearError = (errorMsg, msgCustom) => {
   errorMsg.msg = errorMsg.msg ? errorMsg.msg : msgCustom;
@@ -56,7 +42,5 @@ const crearError = (errorMsg, msgCustom) => {
 module.exports = {
   filtrar,
   inicializacionFile,
-  isAdmin,
-  crearError,
-
+   crearError,
 };
