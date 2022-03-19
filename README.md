@@ -25,6 +25,24 @@ app.js  que es el archivo principal o el script creado npm start
 Probar todas las rutas de la api
 ```
 
+## ACLARACIONES
+
+
+1.  endpoint Usuarios Login:
+
+```
+en el login  se creo el jwt y el boton de salir session se encargara el front que eliminara ese jwt desde el front y lo redireccionara al login
+```
+
+2. endpoint  Usuarios comprar:
+
+```
+como no decia que parametros se le enviaban desde el endpoint se tomo que se le envia la lista de productos el nombre el telefono y el email o username
+```
+3.  endpoint Usuarios Carritos:
+```
+se actualizo el modelo para que este relacionada a un usuario
+```
 
 ## Bugs solucionados
 
